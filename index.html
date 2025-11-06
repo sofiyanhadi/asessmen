@@ -116,7 +116,7 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    let settings = { sheetUrl: 'https://docs.google.com/spreadsheets/d/1VncqJ_CHEKz8loD_jI0AZ1Lmb1Ztr5_a6nGdYak-u8A/edit', appsScriptUrl: 'https://script.google.com/macros/s/AKfycbw3qqucrupWOxirdCBITe7nf7u4E2C9SEkVxVGRN5jBl0LCvjddyEfFvU8t4D96kExu/exec', examSubject: '', examMaterial: '' };
+    let settings = { sheetUrl: '', appsScriptUrl: '', examSubject: '', examMaterial: '' };
     const startScreen = document.getElementById('start-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultsScreen = document.getElementById('results-screen');
@@ -316,4 +316,22 @@
       loadSubjectList();
     }
 
-    teacherBtn.addEventListener('click', (e)=>openTeacher
+    teacherBtn.addEventListener('click', (e)=>openTeacherModal(e));
+    closeSettingsBtn.addEventListener('click', (e)=>closeTeacherModal(e));
+    saveSettingsBtn.addEventListener('click', (e)=>saveTeacherSettings(e));
+    modalBackdrop.addEventListener('click', (e)=>closeTeacherModal(e));
+
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape' && teacherModal.style.display==='block') closeTeacherModal();
+    });
+
+    const savedSheet = localStorage.getItem('sheetUrl');
+    const savedApp = localStorage.getItem('appsScriptUrl');
+    if (savedSheet) settings.sheetUrl = savedSheet;
+    if (savedApp) settings.appsScriptUrl = savedApp;
+
+    loadSubjectList();
+  });
+  </script>
+</body>
+</html>
