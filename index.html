@@ -10,14 +10,45 @@
     body { font-family: 'Inter', sans-serif; }
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
-    .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 40; }
-    .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; max-height: 90vh; overflow-y: auto; }
+
+    /* Modal & tombol pengaturan guru */
+    #teacher-settings-btn {
+      z-index: 1100;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1001;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
   <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6 md:p-8 relative overflow-hidden">
-    <button id="teacher-settings-btn" class="absolute top-4 right-4 text-gray-500 hover:text-blue-600" title="Pengaturan Guru">⚙️</button>
+    <button id="teacher-settings-btn" title="Pengaturan Guru">⚙️</button>
     <div class="text-center mb-6">
       <h1 class="text-3xl font-bold text-gray-800">Ujian Esai Otomatis</h1>
       <p id="exam-material-display" class="text-gray-500 mt-1">Ditenagai oleh AI untuk Koreksi Cerdas</p>
@@ -68,27 +99,24 @@
   </div>
 
   <!-- Modal Pengaturan Guru -->
-  <div id="teacher-modal" class="modal">
-    <div class="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full">
-      <h2 class="text-xl font-bold mb-4 text-gray-800">⚙️ Pengaturan Guru</h2>
-      
-      <label class="block mb-2 text-sm font-semibold text-gray-700">URL Spreadsheet Google</label>
-      <input type="text" id="sheet-url-input" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4" placeholder="https://docs.google.com/spreadsheets/d/...">
+  <div id="teacher-modal" class="modal p-6 w-96">
+    <h2 class="text-xl font-bold mb-4 text-gray-800">⚙️ Pengaturan Guru</h2>
+    <label class="block mb-2 text-sm font-semibold text-gray-700">URL Spreadsheet Google</label>
+    <input type="text" id="sheet-url-input" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4" placeholder="https://docs.google.com/spreadsheets/d/...">
 
-      <label class="block mb-2 text-sm font-semibold text-gray-700">URL Apps Script (Web App)</label>
-      <input type="text" id="apps-script-url-input" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4" placeholder="https://script.google.com/macros/s/.../exec">
+    <label class="block mb-2 text-sm font-semibold text-gray-700">URL Apps Script (Web App)</label>
+    <input type="text" id="apps-script-url-input" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4" placeholder="https://script.google.com/macros/s/.../exec">
 
-      <div class="flex justify-end space-x-2">
-        <button id="save-settings-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Simpan</button>
-        <button id="close-settings-btn" class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">Tutup</button>
-      </div>
+    <div class="flex justify-end space-x-2">
+      <button id="save-settings-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Simpan</button>
+      <button id="close-settings-btn" class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">Tutup</button>
     </div>
   </div>
   <div id="modal-backdrop" class="modal-backdrop"></div>
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    let settings = { sheetUrl: 'https://docs.google.com/spreadsheets/d/1VncqJ_CHEKz8loD_jI0AZ1Lmb1Ztr5_a6nGdYak-u8A/edit', appsScriptUrl: 'https://script.google.com/macros/s/AKfycbxa_3Q8ClC8oWabHVTmjWuQixhWVTvdX8L6Km4xoEKofB_bXBUhI54Tl0hfWIjEaE7F/exec', examSubject: '', examMaterial: '' };
+    let settings = { sheetUrl: 'https://docs.google.com/spreadsheets/d/1VncqJ_CHEKz8loD_jI0AZ1Lmb1Ztr5_a6nGdYak-u8A/edit', appsScriptUrl: 'https://script.google.com/macros/s/AKfycbw3qqucrupWOxirdCBITe7nf7u4E2C9SEkVxVGRN5jBl0LCvjddyEfFvU8t4D96kExu/exec', examSubject: '', examMaterial: '' };
     const startScreen = document.getElementById('start-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultsScreen = document.getElementById('results-screen');
@@ -211,7 +239,6 @@
       resultStudentName.textContent = studentName;
       resultClassSubject.textContent = `Kelas: ${studentClass} | ${settings.examSubject} - ${settings.examMaterial}`;
       gradingLoader.classList.remove('hidden');
-
       try {
         const res = await fetch(settings.appsScriptUrl, {
           method: 'POST',
@@ -251,7 +278,7 @@
     submitAnswerBtn.addEventListener('click', submitAnswer);
     retakeQuizBtn.addEventListener('click', retakeQuiz);
 
-    // === Fitur Pengaturan Guru ===
+    // === Fitur Pengaturan Guru (versi final) ===
     const teacherBtn = document.getElementById('teacher-settings-btn');
     const teacherModal = document.getElementById('teacher-modal');
     const modalBackdrop = document.getElementById('modal-backdrop');
@@ -260,19 +287,23 @@
     const saveSettingsBtn = document.getElementById('save-settings-btn');
     const closeSettingsBtn = document.getElementById('close-settings-btn');
 
-    function openTeacherModal() {
-      teacherModal.style.display = 'block';
-      modalBackdrop.style.display = 'block';
+    function openTeacherModal(evt) {
+      if (evt) evt.stopPropagation();
       sheetUrlInput.value = localStorage.getItem('sheetUrl') || settings.sheetUrl || '';
       appsScriptUrlInput.value = localStorage.getItem('appsScriptUrl') || settings.appsScriptUrl || '';
+      teacherModal.style.display = 'block';
+      modalBackdrop.style.display = 'block';
+      sheetUrlInput.focus();
     }
 
-    function closeTeacherModal() {
+    function closeTeacherModal(evt) {
+      if (evt) evt.stopPropagation();
       teacherModal.style.display = 'none';
       modalBackdrop.style.display = 'none';
     }
 
-    function saveTeacherSettings() {
+    function saveTeacherSettings(evt) {
+      if (evt) evt.stopPropagation();
       const sheetUrl = sheetUrlInput.value.trim();
       const appUrl = appsScriptUrlInput.value.trim();
       if (!sheetUrl || !appUrl) { alert('Pastikan kedua URL diisi.'); return; }
@@ -285,13 +316,4 @@
       loadSubjectList();
     }
 
-    teacherBtn.addEventListener('click', openTeacherModal);
-    closeSettingsBtn.addEventListener('click', closeTeacherModal);
-    saveSettingsBtn.addEventListener('click', saveTeacherSettings);
-    modalBackdrop.addEventListener('click', closeTeacherModal);
-
-    // Muat pengaturan tersimpan
-    const savedSheet = localStorage.getItem('sheetUrl');
-    const savedApp = localStorage.getItem('appsScriptUrl');
-    if (savedSheet) settings.sheetUrl = savedSheet;
-    if (savedApp) settings.apps
+    teacherBtn.addEventListener('click', (e)=>openTeacher
